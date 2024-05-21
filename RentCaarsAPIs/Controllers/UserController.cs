@@ -10,7 +10,7 @@ namespace RentCaarsAPIs.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-   
+
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
@@ -19,7 +19,7 @@ namespace RentCaarsAPIs.Controllers
         }
 
         [HttpGet("GetUser")]
-        public async Task<IActionResult> GetUser([FromQuery] int userId)
+        public async Task<ActionResult> GetUser([FromQuery] int userId)
         {
             try
             {
@@ -31,22 +31,27 @@ namespace RentCaarsAPIs.Controllers
                 return NotFound(ex.Message);
             }
         }
+        [HttpGet("GetUsers")]
+        public async Task<List<UserGetDTO>> GetUsers()
+        {
+         return await _userService.GetUsersAsync();
+        }
 
         [HttpPost("CreateUser")]
-        public  IActionResult CreateUser([FromBody] UserRegisterDto userDto)
+        public async Task<ActionResult> CreateUser([FromBody] UserRegisterDto userDto)
         {
-            int result =  _userService.CreateUserAsync(userDto);
+            int result = await _userService.CreateUserAsync(userDto);
             if (result == 0)
             {
                 return Conflict("Username already exists.");
             }
-            return CreatedAtAction(nameof(GetUser), new { userId = result }, "User created successfully.");
+            return Ok("User created successfully.");
         }
 
         [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO userDto)
+        public async Task<ActionResult> UpdateUser([FromBody] UserUpdateDTO userDto, [FromQuery] int id) 
         {
-            int result = await _userService.UpdateUserAsync(userDto);
+            int result = await _userService.UpdateUserAsync(userDto,id);
             if (result == 0)
             {
                 return NotFound("User not found.");
@@ -55,7 +60,7 @@ namespace RentCaarsAPIs.Controllers
         }
 
         [HttpDelete("DeleteUser")]
-        public async Task<IActionResult> DeleteUser([FromQuery] int userId)
+        public async Task<ActionResult> DeleteUser([FromQuery] int userId)
         {
             int result = await _userService.DeleteUserAsync(userId);
             if (result == 0)
@@ -66,7 +71,7 @@ namespace RentCaarsAPIs.Controllers
         }
 
         [HttpPost("LoginUser")]
-        public async Task<IActionResult> LoginUser([FromBody] UserLoginDto userDto)
+        public async Task<ActionResult> LoginUser([FromBody] UserLoginDto userDto)
         {
             int result = await _userService.LoginUserAsync(userDto);
             if (result == 0)

@@ -40,9 +40,6 @@ namespace RentCaarsAPIs.Services
                 })
                 .FirstOrDefaultAsync();
 
-            if (car == null)
-                throw new Exception("Car not found");
-
             return car;
         }
 
@@ -69,8 +66,12 @@ namespace RentCaarsAPIs.Services
             return cars;
         }
 
-        public async Task CreateCarAsync(CarCreateDto carDto)
-        {
+        public async Task<int> CreateCarAsync(CarCreateDto carDto)
+        {   var user = await _context.Users.FindAsync(carDto.UserId);
+            if(user == null)
+            {
+                return 0;
+            }
             var car = new Car
             {
                 Model = carDto.Model,
@@ -88,14 +89,17 @@ namespace RentCaarsAPIs.Services
 
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
+            return car.CarId;
         }
 
-        public async Task UpdateCarAsync(int Id, CarUpdateDTO carDto)
+        public async Task<Car> UpdateCarAsync(int Id, CarUpdateDTO carDto)
         {
             var car = await _context.Cars.FindAsync(Id);
 
             if (car == null)
-                throw new Exception("Car not found");
+            {
+                return null;
+            }
 
             car.Model = carDto.Model;
             car.Brand = carDto.Brand;
@@ -109,17 +113,20 @@ namespace RentCaarsAPIs.Services
             car.Description = carDto.Description;
 
             await _context.SaveChangesAsync();
+            return car;
         }
 
-        public async Task DeleteCarAsync(int carId)
+        public async Task<int> DeleteCarAsync(int carId)
         {
             var car = await _context.Cars.FindAsync(carId);
-
             if (car == null)
-                throw new Exception("Car not found");
+            {
+                return 0;
+            }
 
             _context.Cars.Remove(car);
             await _context.SaveChangesAsync();
+            return 1;
         }
     }
 }

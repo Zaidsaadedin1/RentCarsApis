@@ -1,4 +1,5 @@
 ﻿using RentCaarsAPIs.Dtos.CarDtos;
+using RentCaarsAPIs.Models;
 
 namespace RentCaarsAPIs.Interfaces
 {
@@ -6,8 +7,8 @@ namespace RentCaarsAPIs.Interfaces
     {
         Task<CarGetDTO> GetCarAsync(int carId);
         Task<List<CarGetDTO>> GetListOfCarAsync();
-        Task CreateCarAsync(CarCreateDto car);
-        Task UpdateCarAsync(int Id,CarUpdateDTO car);
-        Task DeleteCarAsync(int carId);
+        Task<int> CreateCarAsync(CarCreateDto car);
+        Task<Car> UpdateCarAsync(int Id, CarUpdateDTO carDto);
+        Task<int> DeleteCarAsync(int carId);
     }
 }

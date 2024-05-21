@@ -14,7 +14,6 @@
         // You can also add more detailed specifications if required:
         public double Mileage { get; set; }       // Current mileage
         public string Description { get; set; }   // Additional details about the car
-        public int UserId { get; set; }
 
     }
 }

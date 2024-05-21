@@ -39,10 +39,26 @@ namespace RentCaarsAPIs.Services
 
             return user;
         }
-
-        public int CreateUserAsync(UserRegisterDto userDto)
+        public async Task<List<UserGetDTO>> GetUsersAsync()
         {
-            var existingUser =  _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
+            var users = await _context.Users
+                .Select(u => new UserGetDTO
+                {
+                    UserId = u.UserId,
+                    Username = u.Username,
+                    IsAdmin = u.IsAdmin,
+                    Cars = u.Cars.ToList(),
+                    Orders = u.Orders.ToList()
+                })
+                .ToListAsync();
+
+            return users;
+        }
+
+
+        public async Task<int> CreateUserAsync(UserRegisterDto userDto)
+        {
+            var existingUser =  await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
             if (existingUser != null)
             {
                 return 0;
@@ -51,24 +67,26 @@ namespace RentCaarsAPIs.Services
             var user = new User
             {
                 Username = userDto.Username,
-                Password = HashPassword(userDto.Password),
+                Password = userDto.Password,
                 IsAdmin = userDto.IsAdmin
             };
 
             _context.Users.Add(user);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return 1;
         }
 
-        public async Task<int> UpdateUserAsync(UserUpdateDTO userDto)
+        public async Task<int> UpdateUserAsync(UserUpdateDTO userDto , int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null)
             {
                 return 0;
             }
 
-            user.Password = HashPassword(userDto.Password);
+            user.Password = userDto.Password;
+            user.Username = userDto.Username;
+
             await _context.SaveChangesAsync();
             return 1;
         }
@@ -89,7 +107,7 @@ namespace RentCaarsAPIs.Services
         public async Task<int> LoginUserAsync(UserLoginDto userDto)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == userDto.Username && VerifyPassword(userDto.Password, u.Password));
+                .FirstOrDefaultAsync(u => u.Username == userDto.Username && userDto.Password== u.Password);
 
             if (user == null)
             {
@@ -97,29 +115,6 @@ namespace RentCaarsAPIs.Services
             }
 
             return 1;
-        }
-
-        private string HashPassword(string password)
-        {
-            byte[] salt = new byte[128 / 8];
-            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
-
-            return hashed;
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            return HashPassword(password) == hashedPassword;
         }
     }
 }

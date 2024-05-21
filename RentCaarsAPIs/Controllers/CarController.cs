@@ -5,6 +5,7 @@
     using RentCaarsAPIs.Dtos.CarDtos;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using RentCaarsAPIs.Models;
 
     [ApiController]
     public class CarController : ControllerBase
@@ -17,77 +18,76 @@
         }
 
         [HttpGet("/GetCar")]
-        public async Task<ActionResult<CarGetDTO>> GetCar([FromQuery]  int id)
+        public async Task<ActionResult<CarGetDTO>> GetCar([FromQuery] int id)
         {
-            try
+            if (id <= 0)
             {
-                var car = await _carService.GetCarAsync(id);
-                if (car == null)
-                {
-                    return NotFound();
-                }
-                return car;
+                return NotFound("car Not found");
             }
-            catch
+            var car = await _carService.GetCarAsync(id);
+            if (car == null)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return NotFound("car Not found");
             }
+            return Ok(car);
+
         }
 
         [HttpGet("/GetCars")]
         public async Task<ActionResult<List<CarGetDTO>>> GetCars()
-        {
-            try
-            {
-                var cars = await _carService.GetListOfCarAsync();
-                return cars;
-            }
-            catch
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+        {   
+            var cars = await _carService.GetListOfCarAsync();
+            return cars;
         }
 
         [HttpPost("/CreateCar")]
-        public async Task<IActionResult> CreateCar([FromBody] CarCreateDto car)
+        public async Task<ActionResult> CreateCar([FromBody] CarCreateDto car)
         {
-            try
+            if (car == null)
             {
-                await _carService.CreateCarAsync(car);
-                return Ok();
+                return BadRequest("all required fields should be filled");
             }
-            catch
+            var newCar = await _carService.CreateCarAsync(car);
+            if (newCar == 0)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return BadRequest("all required fields should be filled");
             }
+            return Ok("car created successfully");
         }
 
         [HttpPut("/UpdateCar")]
-        public async Task<IActionResult> UpdateCar([FromQuery] int Id, [FromBody] CarUpdateDTO car)
+        public async Task<ActionResult> UpdateCar([FromQuery] int Id, [FromBody] CarUpdateDTO carUpdateDTO)
         {
-            try
+            if (carUpdateDTO == null)
             {
-                await _carService.UpdateCarAsync(Id,car);
-                return NoContent();
+                return BadRequest("all required fields should be filled");
             }
-            catch
+            if (Id <=0)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return BadRequest("car Not found");
             }
+            var car = await _carService.UpdateCarAsync(Id, carUpdateDTO);
+            if (car == null )
+            {
+                return BadRequest("car Not found");
+            }
+            return Ok("car updated successfully");
         }
 
+
         [HttpDelete("/DeleteCar")]
-        public async Task<IActionResult> DeleteCar([FromQuery] int id)
+        public async Task<ActionResult> DeleteCar([FromQuery] int id)
         {
-            try
+            if (id <= 0)
             {
-                await _carService.DeleteCarAsync(id);
-                return NoContent();
+                return BadRequest("Car not found");
             }
-            catch
+            var res = await _carService.DeleteCarAsync(id);
+            if (res == 0)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return BadRequest("Car not found");
             }
+            return Ok("Car Deleted successfully");
         }
     }
 
