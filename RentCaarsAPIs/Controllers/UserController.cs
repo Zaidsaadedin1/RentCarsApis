@@ -1,14 +1,16 @@
-﻿namespace RentCaarsAPIs.Controllers
-{
-    using Microsoft.AspNetCore.Mvc;
-    using RentCaarsAPIs.Interfaces;
-    using RentCaarsAPIs.Dtos.UserDtos;
-    using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using RentCaarsAPIs.Dtos.UserDtos;
+using RentCaarsAPIs.Interfaces;
+using RentCaarsAPIs.Services;
+using System;
+using System.Threading.Tasks;
 
+namespace RentCaarsAPIs.Controllers
+{
     [ApiController]
-    [Route("[controller]")]
     public class UserController : ControllerBase
     {
+   
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
@@ -16,44 +18,62 @@
             _userService = userService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserGetDTO>> GetUser(int id)
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser([FromQuery] int userId)
         {
-            var user = await _userService.GetUserAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = await _userService.GetUserAsync(userId);
+                return Ok(user);
             }
-            return Ok(user);
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] UserRegisterDto user)
+        [HttpPost("CreateUser")]
+        public  IActionResult CreateUser([FromBody] UserRegisterDto userDto)
         {
-            await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Username }, user);
+            int result =  _userService.CreateUserAsync(userDto);
+            if (result == 0)
+            {
+                return Conflict("Username already exists.");
+            }
+            return CreatedAtAction(nameof(GetUser), new { userId = result }, "User created successfully.");
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto user)
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO userDto)
         {
-            await _userService.LoginUserAsync(user);
-            return Ok(); // Normally return a token or similar credential
+            int result = await _userService.UpdateUserAsync(userDto);
+            if (result == 0)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok("User updated successfully.");
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO user)
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([FromQuery] int userId)
         {
-            await _userService.UpdateUserAsync(user);
-            return NoContent();
+            int result = await _userService.DeleteUserAsync(userId);
+            if (result == 0)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok("User deleted successfully.");
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpPost("LoginUser")]
+        public async Task<IActionResult> LoginUser([FromBody] UserLoginDto userDto)
         {
-            await _userService.DeleteUserAsync(id);
-            return NoContent();
+            int result = await _userService.LoginUserAsync(userDto);
+            if (result == 0)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+            return Ok("Login successful.");
         }
     }
-
 }

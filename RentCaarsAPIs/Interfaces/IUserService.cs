@@ -5,10 +5,10 @@ namespace RentCaarsAPIs.Interfaces
     public interface IUserService
     {
         Task<UserGetDTO> GetUserAsync(int userId);
-        Task CreateUserAsync(UserRegisterDto user);
-        Task LoginUserAsync(UserLoginDto user);
+        int CreateUserAsync(UserRegisterDto user);
+        Task<int> LoginUserAsync(UserLoginDto user);
 
-        Task UpdateUserAsync(UserUpdateDTO user);
-        Task DeleteUserAsync(int userId);
+        Task<int> UpdateUserAsync(UserUpdateDTO user);
+        Task<int> DeleteUserAsync(int userId);
     }
 }

@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
 
     [ApiController]
-    [Route("[controller]")]
     public class CarController : ControllerBase
     {
         private readonly ICarService _carService;
@@ -17,43 +16,78 @@
             _carService = carService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CarGetDTO>> GetCar(int id)
+        [HttpGet("/GetCar")]
+        public async Task<ActionResult<CarGetDTO>> GetCar([FromQuery]  int id)
         {
-            var car = await _carService.GetCarAsync(id);
-            if (car == null)
+            try
             {
-                return NotFound();
+                var car = await _carService.GetCarAsync(id);
+                if (car == null)
+                {
+                    return NotFound();
+                }
+                return car;
             }
-            return car;
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-        [HttpGet]
+        [HttpGet("/GetCars")]
         public async Task<ActionResult<List<CarGetDTO>>> GetCars()
         {
-            var cars = await _carService.GetListOfCarAsync();
-            return cars;
+            try
+            {
+                var cars = await _carService.GetListOfCarAsync();
+                return cars;
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-        [HttpPost]
+        [HttpPost("/CreateCar")]
         public async Task<IActionResult> CreateCar([FromBody] CarCreateDto car)
         {
-            await _carService.CreateCarAsync(car);
-            return CreatedAtAction(nameof(GetCar), new { id = car.UserId }, car);
+            try
+            {
+                await _carService.CreateCarAsync(car);
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateCar([FromBody] CarUpdateDTO car)
+        [HttpPut("/UpdateCar")]
+        public async Task<IActionResult> UpdateCar([FromQuery] int Id, [FromBody] CarUpdateDTO car)
         {
-            await _carService.UpdateCarAsync(car);
-            return NoContent();
+            try
+            {
+                await _carService.UpdateCarAsync(Id,car);
+                return NoContent();
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCar(int id)
+        [HttpDelete("/DeleteCar")]
+        public async Task<IActionResult> DeleteCar([FromQuery] int id)
         {
-            await _carService.DeleteCarAsync(id);
-            return NoContent();
+            try
+            {
+                await _carService.DeleteCarAsync(id);
+                return NoContent();
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
     }
 

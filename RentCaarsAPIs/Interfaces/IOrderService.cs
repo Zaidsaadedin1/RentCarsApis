@@ -6,7 +6,12 @@ namespace RentCaarsAPIs.Interfaces
     {
         Task<OrderGetDTO> GetOrderAsync(int orderId);
         Task<List<OrderGetDTO>> GetListOfOrderAsync();
-        Task CreateOrderAsync(OrderCreateDTO order);
-        Task DeleteOrderAsync(int orderId);
+        Task<int> CreateOrderAsync(OrderCreateDTO order);
+        Task<int> DeleteOrderAsync(int orderId);
+        Task<List<OrderGetDTO>> GetUserOrdersAsync(int userId);
+        Task<int> DeleteUserOrdersAsync(int userId , int orderId);
+        
+
+
     }
 }

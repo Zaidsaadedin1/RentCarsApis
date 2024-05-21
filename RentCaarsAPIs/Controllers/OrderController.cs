@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
 
     [ApiController]
-    [Route("[controller]")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -17,8 +16,8 @@
             _orderService = orderService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OrderGetDTO>> GetOrder(int id)
+        [HttpGet("/GetOrder")]
+        public async Task<ActionResult<OrderGetDTO>> GetOrder([FromQuery] int id)
         {
             var order = await _orderService.GetOrderAsync(id);
             if (order == null)
@@ -28,22 +27,22 @@
             return Ok(order);
         }
 
-        [HttpGet]
+        [HttpGet("/GetOrders")]
         public async Task<ActionResult<List<OrderGetDTO>>> GetOrders()
         {
             var orders = await _orderService.GetListOfOrderAsync();
             return Ok(orders);
         }
 
-        [HttpPost]
+        [HttpPost("/CreateOrder")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDTO order)
         {
             await _orderService.CreateOrderAsync(order);
-            return CreatedAtAction(nameof(GetOrder), new { id = order.UserId }, order); // Fix return data as appropriate
+            return CreatedAtAction(nameof(GetOrder), new { id = order.UserId }, order); 
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
+        [HttpDelete("/DeleteOrder")]
+        public async Task<IActionResult> DeleteOrder([FromQuery] int id)
         {
             await _orderService.DeleteOrderAsync(id);
             return NoContent();

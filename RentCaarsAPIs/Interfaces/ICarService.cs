@@ -6,9 +6,8 @@ namespace RentCaarsAPIs.Interfaces
     {
         Task<CarGetDTO> GetCarAsync(int carId);
         Task<List<CarGetDTO>> GetListOfCarAsync();
-
         Task CreateCarAsync(CarCreateDto car);
-        Task UpdateCarAsync(CarUpdateDTO car);
+        Task UpdateCarAsync(int Id,CarUpdateDTO car);
         Task DeleteCarAsync(int carId);
     }
 }

@@ -148,3 +148,4 @@ C:\Projects\Priv\RentCars\RentCaarsAPIs\obj\Debug\net8.0\refint\RentCaarsAPIs.dl
 C:\Projects\Priv\RentCars\RentCaarsAPIs\obj\Debug\net8.0\RentCaarsAPIs.pdb
 C:\Projects\Priv\RentCars\RentCaarsAPIs\obj\Debug\net8.0\RentCaarsAPIs.genruntimeconfig.cache
 C:\Projects\Priv\RentCars\RentCaarsAPIs\obj\Debug\net8.0\ref\RentCaarsAPIs.dll
+C:\Projects\Priv\RentCars\RentCaarsAPIs\obj\Debug\net8.0\RentCaarsAPIs.sourcelink.json
