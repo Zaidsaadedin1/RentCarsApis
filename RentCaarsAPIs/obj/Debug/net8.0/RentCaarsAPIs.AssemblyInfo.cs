@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RentCaarsAPIs")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ec288b3f3b5f2b082b7a3ce413a233b32358df16")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6fac679cf06f2590967130542fc3d091eca52105")]
 [assembly: System.Reflection.AssemblyProductAttribute("RentCaarsAPIs")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RentCaarsAPIs")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

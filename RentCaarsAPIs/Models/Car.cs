@@ -2,7 +2,7 @@
 {
     public class Car
     {
-        public int CarId { get; set; }
+        public int Id { get; set; }
         public string Model { get; set; } = null!;
         public string Brand { get; set; }          // Brand of the car, e.g., Toyota, Ford
         public string LicenseNumber { get; set; }

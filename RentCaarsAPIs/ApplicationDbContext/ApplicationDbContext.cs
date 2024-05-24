@@ -13,6 +13,20 @@ namespace RentCaarsAPIs.Data {
         public DbSet<Car> Cars { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Order> Orders { get; set; }
-      
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Car)
+                .WithMany()
+                .HasForeignKey(o => o.CarId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+        }
+
     }
 }

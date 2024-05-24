@@ -22,10 +22,10 @@ namespace RentCaarsAPIs.Services
         public async Task<CarGetDTO> GetCarAsync(int carId)
         {
             var car = await _context.Cars
-                .Where(c => c.CarId == carId)
+                .Where(c => c.Id == carId)
                 .Select(c => new CarGetDTO
                 {
-                    CarId = c.CarId,
+                    CarId = c.Id,
                     Model = c.Model,
                     Brand = c.Brand,
                     LicenseNumber = c.LicenseNumber,
@@ -48,7 +48,7 @@ namespace RentCaarsAPIs.Services
             var cars = await _context.Cars
                 .Select(c => new CarGetDTO
                 {
-                    CarId = c.CarId,
+                    CarId = c.Id,
                     Model = c.Model,
                     Brand = c.Brand,
                     LicenseNumber = c.LicenseNumber,
@@ -89,7 +89,7 @@ namespace RentCaarsAPIs.Services
 
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
-            return car.CarId;
+            return car.Id;
         }
 
         public async Task<Car> UpdateCarAsync(int Id, CarUpdateDTO carDto)

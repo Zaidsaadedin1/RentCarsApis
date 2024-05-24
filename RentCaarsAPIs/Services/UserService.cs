@@ -23,10 +23,10 @@ namespace RentCaarsAPIs.Services
         public async Task<UserGetDTO> GetUserAsync(int userId)
         {
             var user = await _context.Users
-                .Where(u => u.UserId == userId)
+                .Where(u => u.Id == userId)
                 .Select(u => new UserGetDTO
                 {
-                    UserId = u.UserId,
+                    UserId = u.Id,
                     Username = u.Username,
                     IsAdmin = u.IsAdmin,
                     Cars = u.Cars.ToList(),
@@ -44,7 +44,7 @@ namespace RentCaarsAPIs.Services
             var users = await _context.Users
                 .Select(u => new UserGetDTO
                 {
-                    UserId = u.UserId,
+                    UserId = u.Id,
                     Username = u.Username,
                     IsAdmin = u.IsAdmin,
                     Cars = u.Cars.ToList(),
@@ -78,7 +78,7 @@ namespace RentCaarsAPIs.Services
 
         public async Task<int> UpdateUserAsync(UserUpdateDTO userDto , int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 return 0;

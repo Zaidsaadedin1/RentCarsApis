@@ -31,10 +31,10 @@ namespace RentCaarsAPIs.Services
             }
 
             return await _context.Orders
-                .Where(o => o.OrderId == orderId)
+                .Where(o => o.Id == orderId)
                 .Select(o => new OrderGetDTO
                 {
-                    OrderId = o.OrderId,
+                    OrderId = o.Id,
                     UserId = o.UserId,
                     CarId = o.CarId,
                     RentalDate = o.RentalDate,
@@ -48,7 +48,7 @@ namespace RentCaarsAPIs.Services
             var orders = await _context.Orders
                 .Select(o => new OrderGetDTO
                 {
-                    OrderId = o.OrderId,
+                    OrderId = o.Id,
                     UserId = o.UserId,
                     CarId = o.CarId,
                     RentalDate = o.RentalDate,
@@ -82,7 +82,7 @@ namespace RentCaarsAPIs.Services
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return order.OrderId;
+            return order.Id;
         }
 
         public async Task<int> DeleteOrderAsync(int orderId)
@@ -104,7 +104,7 @@ namespace RentCaarsAPIs.Services
                 .Where(o => o.UserId == userId)
                 .Select(o => new OrderGetDTO
                 {
-                    OrderId = o.OrderId,
+                    OrderId = o.Id,
                     UserId = o.UserId,
                     CarId = o.CarId,
                     RentalDate = o.RentalDate,
@@ -113,14 +113,14 @@ namespace RentCaarsAPIs.Services
                 .ToListAsync();
         }
 
-        public async Task<int> DeleteUserOrderAsync(int userId, int orderId)
+        public async Task<int> DeleteUserOrdersAsync(int userId, int orderId)
         {
             if (userId <= 0 || orderId <= 0)
             {
                 return 0;
             }
 
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == userId && o.OrderId == orderId);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == userId && o.Id == orderId);
             if (order == null)
             {
                 return 0; // Not found
@@ -129,5 +129,7 @@ namespace RentCaarsAPIs.Services
             await _context.SaveChangesAsync();
             return 1; // Successfully deleted
         }
+
+    
     }
 }
